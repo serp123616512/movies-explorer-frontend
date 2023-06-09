@@ -3,12 +3,12 @@ import React from 'react';
 import SearchForm from '../SearchForm/SearchForm';
 import MoviesCardList from '../MoviesCardList/MoviesCardList';
 
+import cards from '../../utils/constants';
+
 import './Movies.css';
 
 function Movies() {
-  const cards = [];
-
-  return (
+    return (
     <section className="movies">
       <SearchForm />
       <MoviesCardList
