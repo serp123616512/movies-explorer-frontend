@@ -1,0 +1,151 @@
+.techs {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #272727;
+  position: relative;
+  padding: 100px 0;
+  box-sizing: border-box;
+}
+
+.techs__container {
+  max-width: 1140px;
+  width: calc(100% - 2*30px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.techs__heading {
+  width: 100%;
+  font-weight: 400;
+  font-size: 22px;
+  line-height: 27px;
+  letter-spacing: -0.04em;
+  color: #FFF;
+  margin: 0 0 90px;
+  padding: 0 0 23px;
+  border-bottom: 1px #DADADA solid;
+}
+
+.techs__article {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.techs__title {
+  font-weight: 400;
+  font-size: 50px;
+  line-height: 58px;
+  text-align: center;
+  letter-spacing: -0.04em;
+  color: #FFFFFF;
+  padding: 0;
+  margin: 0 0 26px;
+}
+
+.techs__subtitle {
+  max-width: 460px;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  text-align: center;
+  letter-spacing: -0.04em;
+  color: #FFFFFF;
+  padding: 0;
+  margin: 0 0 100px;
+}
+
+.techs__cards {
+  width: 100%;
+  display: grid;
+  justify-content: center;
+  grid-template-columns: repeat(auto-fit, 90px);
+  gap: 10px;
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+.techs__card {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 60px;
+  text-align: center;
+  letter-spacing: -0.04em;
+  color: #FFFFFF;
+  background: #303030;
+border-radius: 10px;
+}
+
+@media screen and (max-width: 768px) {
+  .techs {
+    padding: 90px 0;
+  }
+
+  .techs__container {
+    width: calc(100% - 2*50px);
+  }
+
+  .techs__heading {
+    margin-bottom: 80px;
+  }
+
+  .techs__title {
+    margin-bottom: 22px;
+  }
+
+  .techs__subtitle {
+    font-size: 12px;
+    line-height: 18px;
+    margin-bottom: 83px;
+  }
+
+  .techs__cards {
+    grid-template-columns: repeat(auto-fit, 84px);
+  }
+
+  .techs__card {
+    font-size: 12px;
+    line-height: 57px;
+  }
+}
+
+@media screen and (max-width: 520px) {
+  .techs {
+    background-color: #202020;
+    padding: 70px 0;
+  }
+
+  .techs__container {
+    width: calc(100% - 2*18px);
+  }
+
+  .techs__heading {
+    font-size: 18px;
+    line-height: 22px;
+    margin-bottom: 60px;
+    padding-bottom: 28px;
+  }
+
+  .techs__title {
+    font-size: 30px;
+    line-height: 36px;
+    margin-bottom: 24px;
+  }
+
+  .techs__subtitle {
+    font-size: 11px;
+    line-height: 16px;
+    margin-bottom: 50px;
+  }
+
+  .techs__cards {
+    box-sizing: border-box;
+    padding-left: 7px;
+    padding-right: 7px;
+  }
+}
