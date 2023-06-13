@@ -10,21 +10,21 @@ function NavTab() {
         <ul className="nav-tab__nav">
           <li>
           <Link
-            className="nav-tab__link"
+            className="nav-tab__link button-hover"
             smooth
             to="/#about-project"
           >О проекте</Link>
           </li>
           <li>
           <Link
-            className="nav-tab__link"
+            className="nav-tab__link button-hover"
             smooth
             to="/#techs"
           >Технологии</Link>
           </li>
           <li>
           <Link
-            className="nav-tab__link"
+            className="nav-tab__link button-hover"
             smooth
             to="/#about-me"
           >Студент</Link>

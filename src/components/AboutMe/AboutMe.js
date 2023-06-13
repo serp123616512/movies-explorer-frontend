@@ -28,7 +28,7 @@ function AboutMe() {
               </p>
             </div>
             <Link
-              className="about-me__link-github"
+              className="about-me__link-github button-hover"
               to="https://github.com/serp123616512"
               target="_blank"
             >Github</Link>

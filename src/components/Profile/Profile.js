@@ -39,11 +39,11 @@ function Profile({onSubmit}) {
         <span id="email-error" className="profile__input-error">Что-то пошло не так...</span>
       </form>
       <button
-        className="profile__submit"
+        className="profile__submit button-hover"
         type="submit"
         form="profile__form"
       >Редактировать</button>
-      <button className="profile__logout">Выйти из аккаунта</button>
+      <button className="profile__logout button-hover">Выйти из аккаунта</button>
     </section>
   )
 }

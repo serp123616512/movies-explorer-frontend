@@ -1,4 +1,4 @@
-.label {
+.filter-checkbox {
   max-width: min-content;
   display: flex;
   flex-direction: row;
@@ -11,7 +11,7 @@
   margin: 29px auto;
 }
 
-.checkbox {
+.filter-checkbox__input {
   appearance: none;
   width: 32px;
   height: 16px;
@@ -28,7 +28,7 @@
   margin-right: 12px;
 }
 
-.checkbox::before {
+.filter-checkbox__input::before {
   content: "";
   grid-area: track;
   inline-size: 16px;
@@ -38,21 +38,17 @@
   transition: all .3s ease;
 }
 
-.checkbox:checked {
+.filter-checkbox__input:checked {
   background-color: #3DDC84;
 }
 
-.checkbox:checked::before {
+.filter-checkbox__input:checked::before {
   background-color: #fff;
   transform: translateX(16px);
 }
 
-.checkbox:hover {
-  cursor: pointer;
-}
-
 @media screen and (max-width: 520px) {
-  .label {
+  .filter-checkbox {
     font-size: 11px;
     margin-top: 42px;
     margin-bottom: 24px;

@@ -21,3 +21,12 @@
   text-rendering: optimizeLegibility;
   box-sizing: border-box;
 }
+
+.button-hover {
+  transition: opacity .3s ease;
+}
+
+.button-hover:hover {
+  opacity: .6;
+  cursor: pointer;
+}

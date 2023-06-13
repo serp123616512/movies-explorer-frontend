@@ -10,7 +10,7 @@ function Portfolio() {
       <ul className="portfolio__list">
         <li>
           <Link
-            className="portfolio__link"
+            className="portfolio__link button-hover"
             to="https://github.com/serp123616512/how-to-learn"
             target="_blank"
           >
@@ -20,7 +20,7 @@ function Portfolio() {
         </li>
         <li>
           <Link
-            className="portfolio__link"
+            className="portfolio__link button-hover"
             to="https://serp123616512.github.io/russian-travel"
             target="_blank"
           >
@@ -30,7 +30,7 @@ function Portfolio() {
         </li>
         <li>
           <Link
-            className="portfolio__link"
+            className="portfolio__link button-hover"
             to="https://serp123616512.github.io/mesto/"
             target="_blank"
           >

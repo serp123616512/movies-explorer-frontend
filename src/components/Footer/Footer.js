@@ -12,14 +12,14 @@ function Footer() {
         <ul className="footer__list">
           <li className="footer__block">
             <Link
-              className="footer__link"
+              className="footer__link button-hover"
               to="https://practicum.yandex.ru/"
               target="_blank"
             >Яндекс.Практикум</Link>
           </li>
           <li className="footer__block">
           <Link
-              className="footer__link"
+              className="footer__link button-hover"
               to="https://github.com/"
               target="_blank"
             >Github</Link>

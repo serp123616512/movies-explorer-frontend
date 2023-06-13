@@ -12,7 +12,7 @@ function SearchForm({onSubmit}) {
       onSubmit={onSubmit}
     >
       <fieldset className="search-form__wrapper">
-        <label className="search-form__label" for="movie" />
+        <label className="search-form__label" htmlFor="movie" />
         <input
           className="search-form__input"
           id="movie"
@@ -22,7 +22,7 @@ function SearchForm({onSubmit}) {
           required
         />
         <input
-        className="search-form__submit"
+        className="search-form__submit button-hover"
         type="submit"
         form="search-form"
         value=" "

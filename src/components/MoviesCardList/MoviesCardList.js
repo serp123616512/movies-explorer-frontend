@@ -11,12 +11,13 @@ function MoviesCardList ({cards}) {
         {cards.map(card => {
           return(
             <MoviesCard
+              key={card.id}
               card={card}
             />
           )
         })}
       </ul>
-      <button className="movies-card-list__button">Ещё</button>
+      <button className="movies-card-list__button button-hover">Ещё</button>
     </section>
   )
 };

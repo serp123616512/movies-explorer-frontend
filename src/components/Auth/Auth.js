@@ -1,8 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-import AuthForm from '../AuthForm/AuthForm';
-
 import './Auth.css';
 
 function Auth({
@@ -18,7 +16,7 @@ function Auth({
     <section className="auth">
       <div className="auth__header">
         <Link
-          className="auth__header-link"
+          className="auth__header-link button-hover"
           to="/"
         />
         <h1 className="auth__heading">{heading}</h1>
@@ -26,14 +24,14 @@ function Auth({
       {children}
       <div className="auth__footer">
         <button
-          className="auth__button"
+          className="auth__button button-hover"
           form={formId}
           type="submit"
         >{textButton}</button>
         <p className="auth__text">
           {textFooter}
           <Link
-            className="auth__footer-link"
+            className="auth__footer-link button-hover"
             to={link}
           >{textLink}</Link>
         </p>

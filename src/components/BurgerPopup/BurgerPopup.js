@@ -5,7 +5,7 @@ import './BurgerPopup.css';
 
 function BurgerPopup() {
   return (
-    <section className="burger-popup burger-popup_opend">
+    <section className="burger-popup ">
       <Routes>
         <Route path="/movies" element={
           <div className="burger-popup__container">

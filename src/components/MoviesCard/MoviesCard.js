@@ -22,10 +22,10 @@ function MoviesCard ({card}) {
         alt={card.nameRU}
       />
       <div className="card__info">
-        <Link className="card__link" to={card.trailerLink}>{card.nameRU}</Link>
+        <Link className="card__link button-hover" to={card.trailerLink}>{card.nameRU}</Link>
         <button
-        className="card__like"
-      />
+          className="card__like button-hover"
+        />
       </div>
       <p className="card__duration">{duration(card.duration)}</p>
     </li>

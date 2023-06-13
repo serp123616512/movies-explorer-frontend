@@ -52,6 +52,10 @@
   box-shadow: none;
 }
 
+.card__like_active {
+  background-image: url(../../images/like-active.svg);
+}
+
 .card__duration {
   font-weight: 400;
   font-size: 11px;
