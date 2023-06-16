@@ -3,14 +3,16 @@ import React from 'react';
 import SearchForm from '../SearchForm/SearchForm';
 import MoviesCardList from '../MoviesCardList/MoviesCardList';
 
-import cards from '../../utils/constants';
+import { cards } from '../../utils/constants';
 
-import './SavedMovies.css';
+import './Movies.css';
 
-function SavedMovies() {
+function Movies({ onGetMovies }) {
     return (
-    <section className="saved-movies">
-      <SearchForm />
+    <section className="movies">
+      <SearchForm
+        onSubmit={onGetMovies}
+      />
       <MoviesCardList
         cards={cards}
       />
@@ -18,4 +20,4 @@ function SavedMovies() {
   )
 }
 
-export default SavedMovies;
+export default Movies;

@@ -10,6 +10,8 @@ function AuthInput({
   placeholder,
   minLength,
   maxLength,
+  value,
+  onChange,
 }) {
   return (
     <label className="label" form={formId}>
@@ -21,6 +23,8 @@ function AuthInput({
         placeholder={placeholder}
         minLength={minLength}
         maxLength={maxLength}
+        value={value}
+        onChange={onChange}
         required
       />
       <span id="error" className="error">Что-то пошло не так...</span>

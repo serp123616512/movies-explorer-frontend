@@ -1,15 +1,35 @@
-import React from 'react';
+import React, { useContext, useState } from 'react';
+
+import { CurrentUserContext } from '../../contexts/CurrentUserContext';
 
 import './Profile.css'
 
-function Profile({onSubmit}) {
+function Profile({ onLogout, onPatchUser }) {
+  const currentUser = useContext(CurrentUserContext);
+  const [name, setName] = useState(currentUser.name);
+  const [email, setEmail] = useState(currentUser.email);
+
+  function handleChangeName(e) {
+    setName(e.target.value);
+  }
+
+  function handleChangeEmail(e) {
+    setEmail(e.target.value);
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault();
+
+    onPatchUser({ name, email });
+  }
+
   return (
     <section className="profile">
-      <h1 className="profile__heading">Привет, Виталий!</h1>
+      <h1 className="profile__heading">Привет, {currentUser.name}!</h1>
       <form
         className="profile__form"
         id="profile__form"
-        onSubmit={onSubmit}
+        onSubmit={handleSubmit}
       >
         <label className="profile__label" >
           Имя
@@ -21,6 +41,8 @@ function Profile({onSubmit}) {
             placeholder="Введите ваше имя"
             minLength="2"
             maxLength="30"
+            value={name}
+            onChange={handleChangeName}
             required
           />
         </label>
@@ -33,6 +55,8 @@ function Profile({onSubmit}) {
             name="email"
             type="email"
             placeholder="Введите ваш E-mail"
+            value={email}
+            onChange={handleChangeEmail}
             required
           />
         </label>
@@ -43,7 +67,10 @@ function Profile({onSubmit}) {
         type="submit"
         form="profile__form"
       >Редактировать</button>
-      <button className="profile__logout button-hover">Выйти из аккаунта</button>
+      <button
+        className="profile__logout button-hover"
+        onClick={onLogout}
+      >Выйти из аккаунта</button>
     </section>
   )
 }
