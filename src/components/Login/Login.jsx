@@ -9,6 +9,8 @@ import Preloader from '../Preloader/Preloader';
 function Login({
   onLogin,
   isPreloaderOpen,
+  isResponseError,
+  textResponse,
 }) {
   const formId = "login-form"
 
@@ -34,6 +36,8 @@ function Login({
       <Auth
         heading="Рады видеть!"
         formId={formId}
+        isResponseError={isResponseError}
+        textResponse={textResponse}
         textButton="Войти"
         textFooter="Ещё не зарегистрированы?"
         link="/signup"

@@ -9,6 +9,8 @@ import Preloader from '../Preloader/Preloader';
 function Register({
   onRegister,
   isPreloaderOpen,
+  isResponseError,
+  textResponse,
 }) {
   const formId = "register-form"
 
@@ -39,6 +41,8 @@ function Register({
       <Auth
         heading="Добро пожаловать!"
         formId={formId}
+        isResponseError={isResponseError}
+        textResponse={textResponse}
         textButton="Зарегистрироваться"
         textFooter="Уже зарегистрированы?"
         link="/signin"

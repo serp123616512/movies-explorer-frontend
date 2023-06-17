@@ -42,9 +42,24 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 40px;
+  padding-top: 10px;
   margin-top: auto;
   margin-bottom: 70px;
+}
+
+.auth__response {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 20px;
+  text-align: center;
+  color: #FFF;
+  min-height: 20px;
+  padding: 0;
+  margin: 0 0 10px;
+}
+
+.auth__response_error {
+  color: #EE3465;
 }
 
 .auth__button {

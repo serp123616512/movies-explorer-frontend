@@ -7,6 +7,8 @@ function Auth({
   heading,
   formId,
   children,
+  isResponseError,
+  textResponse,
   textButton,
   textFooter,
   link,
@@ -23,6 +25,7 @@ function Auth({
       </div>
       {children}
       <div className="auth__footer">
+        <p className={isResponseError ? 'auth__response auth__response_error' : 'auth__response'}>{textResponse}</p>
         <button
           className="auth__button button-hover"
           form={formId}

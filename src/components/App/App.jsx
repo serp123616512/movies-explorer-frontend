@@ -23,14 +23,14 @@ import userApi from '../../utils/UserApi';
 import { configMoviesApi } from '../../utils/constants';
 
 function App() {
+  const navigate = useNavigate();
+
   const movies = [];
 
   const [loggedIn, setLoggedIn] = useState(false);
-
-  const navigate = useNavigate();
-
+  const [isResponseError, setIsResponseError] = useState(false);
+  const [textResponse, setTextResponse] = useState('');
   const [currentUser, setCurrentUser] = useState({});
-
   const [isPreloaderOpen, setIsPreloaderOpen] = useState(true);
 
   function closePreloader() {
@@ -42,11 +42,27 @@ function App() {
     authApi
       .signUp( {name, email, password} )
       .then((res) => {
-        console.log(res);
-        setLoggedIn(true);
-        navigate('/movies')
+        setIsResponseError(false);
+        setTextResponse('Регистрация прошла успешно.');
+        setTimeout(() => {
+          setTextResponse('');
+          navigate('/signin');
+        }, 1000);
       })
-      .catch(console.log)
+      .catch((err) => {
+        setIsResponseError(true);
+        if (err.message === 'Failed to fetch') {
+          setTextResponse('Произошла ошибка на сервере. Пожалуйста, повторите запрос позднее.')
+        } else if (err.validation.body.keys[0] === 'email') {
+          setTextResponse('Поле "E-mail" заполнено неправильно.')
+        } else {
+          setTextResponse(err.message);
+        }
+        setTimeout(() => {
+          setIsResponseError(false);
+          setTextResponse('');
+        }, 5000);
+      })
       .finally(closePreloader);
   }
 
@@ -59,7 +75,20 @@ function App() {
         setLoggedIn(true);
         navigate('/movies')
       })
-      .catch(console.log)
+      .catch((err) => {
+        setIsResponseError(true);
+        if (err.message === 'Failed to fetch') {
+          setTextResponse('Произошла ошибка на сервере. Пожалуйста, повторите запрос позднее.')
+        } else if ((err.validation) && (err.validation.body.keys[0] === 'email')) {
+          setTextResponse('Поле "E-mail" заполнено неправильно.')
+        } else {
+          setTextResponse(err.message);
+        }
+        setTimeout(() => {
+          setIsResponseError(false);
+          setTextResponse('');
+        }, 5000);
+      })
       .finally(closePreloader);
   }
 
@@ -82,6 +111,7 @@ function App() {
       .patchUser({ name, email })
       .then((res) => {
         console.log(res);
+        setCurrentUser(res);
       })
       .catch(console.log)
       .finally(closePreloader);
@@ -131,6 +161,7 @@ function App() {
       .getMovies()
       .then((res) => {
         console.log(res);
+        setCurrentUser(res);
       })
       .catch(console.log)
       .finally(closePreloader);
@@ -235,6 +266,8 @@ function App() {
             loggedIn={loggedIn}
             onRegister={handleSubmitRegister}
             isPreloaderOpen={isPreloaderOpen}
+            isResponseError={isResponseError}
+            textResponse={textResponse}
           />
         } />
         <Route path="/signin" element={
@@ -243,6 +276,8 @@ function App() {
             loggedIn={loggedIn}
             onLogin={handleSubmitLogin}
             isPreloaderOpen={isPreloaderOpen}
+            isResponseError={isResponseError}
+            textResponse={textResponse}
           />
         } />
         <Route path="/*" element={
