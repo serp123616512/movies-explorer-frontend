@@ -1,18 +1,12 @@
 import React from 'react'
-import { Link } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
+
+import { duration } from '../../utils/utils';
 
 import './MoviesCard.css'
 
-function MoviesCard ({card}) {
-  const duration = (dur) => {
-    if (dur < 60) return `${dur}м`;
-    if (dur >= 60) {
-      const hours = (Math.floor(dur/60));
-      const minutes = dur % 60;
-      return `${hours}ч ${minutes}м`;
-    }
-    return false;
-  }
+function MoviesCard ({card, onMovieSave, onMovieDelete}) {
+  const location = useLocation();
 
   return (
     <li className="card">
@@ -23,9 +17,18 @@ function MoviesCard ({card}) {
       />
       <div className="card__info">
         <Link className="card__link button-hover" to={card.trailerLink}>{card.nameRU}</Link>
-        <button
-          className="card__like button-hover"
+        {location.pathname === '/movies' && (
+          <button
+          className={card.liked ? 'card__like card__like_active button-hover' : 'card__like button-hover'}
+          onClick={() => card.liked ? onMovieDelete(card.liked) : onMovieSave(card)}
         />
+        )}
+        {location.pathname === '/saved-movies' && (
+          <button
+          className="card__delete button-hover"
+          onClick={() => onMovieDelete(card._id)}
+        />
+        )}
       </div>
       <p className="card__duration">{duration(card.duration)}</p>
     </li>

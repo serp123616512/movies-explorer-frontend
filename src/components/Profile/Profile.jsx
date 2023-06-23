@@ -1,27 +1,19 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
+import { useEffect } from 'react';
 
 import { CurrentUserContext } from '../../contexts/CurrentUserContext';
+import useForm from '../../hooks/useForm';
 
 import './Profile.css'
 
-function Profile({ onLogout, onPatchUser }) {
+function Profile({ onLogout, onPatchUser, isResponseError, textResponse }) {
   const currentUser = useContext(CurrentUserContext);
-  const [name, setName] = useState(currentUser.name);
-  const [email, setEmail] = useState(currentUser.email);
 
-  function handleChangeName(e) {
-    setName(e.target.value);
-  }
+  const { values, errors, isFormValid, handleChange, handleSubmit, hendleReset } = useForm();
 
-  function handleChangeEmail(e) {
-    setEmail(e.target.value);
-  }
-
-  function handleSubmit(e) {
-    e.preventDefault();
-
-    onPatchUser({ name, email });
-  }
+  useEffect(() => {
+    hendleReset({ name: currentUser.name, email: currentUser.email }, {}, true);
+  }, [currentUser, hendleReset]);
 
   return (
     <section className="profile">
@@ -29,7 +21,7 @@ function Profile({ onLogout, onPatchUser }) {
       <form
         className="profile__form"
         id="profile__form"
-        onSubmit={handleSubmit}
+        onSubmit={handleSubmit(onPatchUser)}
       >
         <label className="profile__label" >
           Имя
@@ -41,12 +33,12 @@ function Profile({ onLogout, onPatchUser }) {
             placeholder="Введите ваше имя"
             minLength="2"
             maxLength="30"
-            value={name}
-            onChange={handleChangeName}
+            value={values.name || ''}
+            onChange={handleChange}
             required
           />
         </label>
-        <span id="name-error" className="profile__input-error">Что-то пошло не так...</span>
+        <span className="profile__input-error">{errors.name}</span>
         <label className="profile__label" >
           E&#8209;mail
           <input
@@ -55,17 +47,19 @@ function Profile({ onLogout, onPatchUser }) {
             name="email"
             type="email"
             placeholder="Введите ваш E-mail"
-            value={email}
-            onChange={handleChangeEmail}
+            value={values.email || ''}
+            onChange={handleChange}
             required
           />
         </label>
-        <span id="email-error" className="profile__input-error">Что-то пошло не так...</span>
+        <span className="profile__input-error">{errors.email}</span>
       </form>
+      <p className={isResponseError ? 'profile__response profile__response_error' : 'profile__response'}>{textResponse}</p>
       <button
         className="profile__submit button-hover"
         type="submit"
         form="profile__form"
+        disabled={!isFormValid}
       >Редактировать</button>
       <button
         className="profile__logout button-hover"

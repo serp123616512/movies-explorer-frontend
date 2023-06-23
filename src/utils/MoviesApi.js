@@ -6,7 +6,7 @@ class MoviesApi {
   }
 
   _checkResponse(res) {
-    return res.ok ? res.json(): Promise.reject({ message: 'Произошла ошибка на сервере, просьба повторить запрос позднее'})
+    return res.ok ? res.json(): Promise.reject({ message: 'Произошла ошибка на сервере. Пожалуйста, повторите запрос позднее.'})
   }
 
   _request(url) {

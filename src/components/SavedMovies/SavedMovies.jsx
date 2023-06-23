@@ -3,16 +3,20 @@ import React from 'react';
 import SearchForm from '../SearchForm/SearchForm';
 import MoviesCardList from '../MoviesCardList/MoviesCardList';
 
-import { cards } from '../../utils/constants';
-
 import './SavedMovies.css';
 
-function SavedMovies() {
+function SavedMovies({ onGetSavedMovies, isResponseError, textResponse, onMovieDelete }) {
     return (
     <section className="saved-movies">
-      <SearchForm />
+      <SearchForm
+        inputsValue={JSON.parse(localStorage.getItem('savedMovieInputsValue')) || { movieValue: '', checked: false }}
+        onSubmit={onGetSavedMovies}
+        isResponseError={isResponseError}
+        textResponse={textResponse}
+      />
       <MoviesCardList
-        cards={cards}
+        cards={JSON.parse(localStorage.getItem('savedMovies')) || []}
+        onMovieDelete={onMovieDelete}
       />
     </section>
   )

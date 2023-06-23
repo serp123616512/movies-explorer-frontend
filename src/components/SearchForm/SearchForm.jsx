@@ -1,39 +1,35 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
+import useForm from '../../hooks/useForm';
 
 import FilterCheckbox from '../FilterCheckbox/FilterCheckbox';
 
 import './SearchForm.css';
 
-function SearchForm({onSubmit}) {
-  const [movieValue, setMovie] = useState('')
-  const [checked, setChecked] = useState(false)
+function SearchForm({ inputsValue, onSubmit, isResponseError, textResponse }) {
 
-  function handleChangeMovie(e) {
-    setMovie(e.target.value);
-  }
+  const { values, errors, isFormValid, handleChange, handleSubmit, hendleReset } = useForm();
 
-  function handleSubmit(e) {
-    e.preventDefault();
-
-    onSubmit({ movieValue, checked });
-  }
+  useEffect(() => {
+    hendleReset({ movieValue: inputsValue.movieValue, checked: inputsValue.checked }, {}, true);
+  }, [inputsValue, hendleReset]);
 
   return (
     <form
       className="search-form"
       id="search-form"
-      onSubmit={handleSubmit}
+      onSubmit={handleSubmit(onSubmit)}
+      noValidate={true}
     >
       <fieldset className="search-form__wrapper">
-        <label className="search-form__label" htmlFor="movie" />
+        <label className="search-form__label" htmlFor="movieValue" />
         <input
           className="search-form__input"
-          id="movie"
-          name="movie"
+          id="movieValue"
+          name="movieValue"
           type="text"
           placeholder="Фильм"
-          value={movieValue}
-          onChange={handleChangeMovie}
+          value={values.movieValue || ''}
+          onChange={handleChange}
           required
         />
         <input
@@ -41,13 +37,17 @@ function SearchForm({onSubmit}) {
         type="submit"
         form="search-form"
         value=" "
+        disabled={!isFormValid || isResponseError}
         />
       </fieldset>
       <FilterCheckbox
-        checked={checked}
-        setChecked={setChecked}
+        checked={values.checked || false}
+        setChecked={handleChange}
       />
-      <span id="search-form-error" className="search-form__error">Что-то пошло не так...</span>
+      <span
+        id="search-form-errro"
+        className={(!isFormValid || isResponseError) ? 'search-form__text search-form__text_error' : 'search-form__text'}
+      >{textResponse}{errors.movieValue || ''}</span>
     </form>
   )
 }

@@ -20,12 +20,10 @@ import moviesApi from '../../utils/MoviesApi';
 import savedMoviesApi from '../../utils/SavedMoviesApi';
 import userApi from '../../utils/UserApi';
 
-import { configMoviesApi } from '../../utils/constants';
+import { configMoviesApi, shortFilm } from '../../utils/constants';
 
 function App() {
   const navigate = useNavigate();
-
-  const movies = [];
 
   const [loggedIn, setLoggedIn] = useState(false);
   const [isResponseError, setIsResponseError] = useState(false);
@@ -37,23 +35,18 @@ function App() {
     setIsPreloaderOpen(false);
   }
 
-  function handleSubmitRegister( {name, email, password} ) {
+  function handleSubmitRegister({ name, email, password }) {
     setIsPreloaderOpen(true);
     authApi
-      .signUp( {name, email, password} )
-      .then((res) => {
-        setIsResponseError(false);
-        setTextResponse('Регистрация прошла успешно.');
-        setTimeout(() => {
-          setTextResponse('');
-          navigate('/signin');
-        }, 1000);
+      .signUp({ name, email, password })
+      .then(() => {
+        handleSubmitLogin({ email, password });
       })
       .catch((err) => {
         setIsResponseError(true);
         if (err.message === 'Failed to fetch') {
           setTextResponse('Произошла ошибка на сервере. Пожалуйста, повторите запрос позднее.')
-        } else if (err.validation.body.keys[0] === 'email') {
+        } else if ((err.validation) && (err.validation.body.keys[0] === 'email')) {
           setTextResponse('Поле "E-mail" заполнено неправильно.')
         } else {
           setTextResponse(err.message);
@@ -61,15 +54,15 @@ function App() {
         setTimeout(() => {
           setIsResponseError(false);
           setTextResponse('');
-        }, 5000);
+        }, 3000);
       })
       .finally(closePreloader);
   }
 
-  function handleSubmitLogin( {email, password} ) {
+  function handleSubmitLogin({ email, password }) {
     setIsPreloaderOpen(true);
     authApi
-      .signIn( {email, password} )
+      .signIn({ email, password })
       .then((res) => {
         console.log(res);
         setLoggedIn(true);
@@ -87,7 +80,7 @@ function App() {
         setTimeout(() => {
           setIsResponseError(false);
           setTextResponse('');
-        }, 5000);
+        }, 3000);
       })
       .finally(closePreloader);
   }
@@ -98,10 +91,22 @@ function App() {
       .signOut()
       .then((res) => {
         console.log(res);
-        setLoggedIn(false)
-        navigate('/')
+        setLoggedIn(false);
+        setCurrentUser({});
       })
-      .catch(console.log)
+      .catch((err) => {
+        console.log(err);
+        setIsResponseError(true);
+        if (err.message === 'Failed to fetch') {
+          setTextResponse('Произошла ошибка на сервере. Пожалуйста, повторите запрос позднее.')
+        } else {
+          setTextResponse(err.message);
+        }
+        setTimeout(() => {
+          setIsResponseError(false);
+          setTextResponse('');
+        }, 3000);
+      })
       .finally(closePreloader);
   }
 
@@ -113,57 +118,133 @@ function App() {
         console.log(res);
         setCurrentUser(res);
       })
-      .catch(console.log)
-      .finally(closePreloader);
-  }
-
-  function handleSubmitMuvies({ movieValue, checked }) {
-    setIsPreloaderOpen(true);
-
-    console.log(movieValue);
-    console.log(checked);
-
-    moviesApi
-      .getMovies()
-      .then((res) => {
-        console.log(res);
-
-        res.forEach((movie) => {
-          movies.push({
-            country: movie.country,
-            director: movie.director,
-            duration: movie.duration,
-            year: movie.year,
-            description: movie.description,
-            image: configMoviesApi.baseUrl + movie.image.url,
-            trailerLink: movie.trailerLink,
-            thumbnail: configMoviesApi.baseUrl + movie.image.formats.thumbnail.url,
-            movieId: movie.id,
-            nameRU: movie.nameRU,
-            nameEN: movie.nameEN,
-          })
-        })
-
-        const newMovies = movies.filter((movie) => {
-          return movie.description.includes(movieValue);
-        })
-
-
-        localStorage.setItem('movies', JSON.stringify(newMovies));
+      .catch((err) => {
+        setIsResponseError(true);
+        if (err.message === 'Failed to fetch') {
+          setTextResponse('Произошла ошибка на сервере. Пожалуйста, повторите запрос позднее.')
+        } else if ((err.validation) && (err.validation.body.keys[0] === 'email')) {
+          setTextResponse('Поле "E-mail" заполнено неправильно.')
+        } else {
+          setTextResponse(err.message);
+        }
+        setTimeout(() => {
+          setIsResponseError(false);
+          setTextResponse('');
+        }, 3000);
       })
-      .catch(console.log)
       .finally(closePreloader);
   }
 
-  function handleSubmitSavedMovies() {
+  function handleSubmitMovies({ movieValue, checked }) {
     setIsPreloaderOpen(true);
+    localStorage.setItem('movieInputsValue', JSON.stringify({ movieValue, checked}));
+
+    Promise.all([moviesApi.getMovies(), savedMoviesApi.getMovies()])
+      .then(([moviesData, savedMoviesData]) => {
+        const movies = [];
+        moviesData.forEach((movie) => {
+          if (movie.description.includes(movieValue) && (checked ? movie.duration <= shortFilm : true)) {
+
+            const savedMovie = savedMoviesData.find((savedMovie) => savedMovie.movieId === movie.id)
+
+            if (savedMovie) {
+              movies.push({
+                country: movie.country,
+                director: movie.director,
+                duration: movie.duration,
+                year: movie.year,
+                description: movie.description,
+                image: configMoviesApi.baseUrl + movie.image.url,
+                trailerLink: movie.trailerLink,
+                thumbnail: configMoviesApi.baseUrl + movie.image.formats.thumbnail.url,
+                movieId: movie.id,
+                nameRU: movie.nameRU,
+                nameEN: movie.nameEN,
+                liked: savedMovie._id,
+              })
+            } else {
+              movies.push({
+                country: movie.country,
+                director: movie.director,
+                duration: movie.duration,
+                year: movie.year,
+                description: movie.description,
+                image: configMoviesApi.baseUrl + movie.image.url,
+                trailerLink: movie.trailerLink,
+                thumbnail: configMoviesApi.baseUrl + movie.image.formats.thumbnail.url,
+                movieId: movie.id,
+                nameRU: movie.nameRU,
+                nameEN: movie.nameEN,
+                liked: false,
+              })
+            }
+          }
+        })
+
+        localStorage.setItem('movies', JSON.stringify(movies));
+
+        if (movies.length === 0) {
+          setTextResponse('К сожалению, не найдено ни одного фильма, удовлетворяющего вашему запросу.');
+          setTimeout(() => {
+            setIsResponseError(false);
+            setTextResponse('');
+          }, 3000);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsResponseError(true);
+        if (err.message === 'Failed to fetch') {
+          setTextResponse('Произошла ошибка на сервере. Пожалуйста, повторите запрос позднее.')
+        } else {
+          setTextResponse(err.message);
+        }
+        setTimeout(() => {
+          setIsResponseError(false);
+          setTextResponse('');
+        }, 3000);
+      })
+      .finally(closePreloader);
+  }
+
+  function handleSubmitSavedMovies({ movieValue, checked }) {
+    setIsPreloaderOpen(true);
+    localStorage.setItem('savedMovieInputsValue', JSON.stringify({ movieValue, checked}));
+
     savedMoviesApi
       .getMovies()
       .then((res) => {
         console.log(res);
-        setCurrentUser(res);
+        const movies = [];
+        res.forEach((movie) => {
+          if (movie.description.includes(movieValue) && (checked ? movie.duration <= shortFilm : true)) {
+            movies.push(movie)
+          }
+        })
+
+        localStorage.setItem('savedMovies', JSON.stringify(movies));
+
+        if (movies.length === 0) {
+          setTextResponse('К сожалению, не найдено ни одного фильма, удовлетворяющего вашему запросу.');
+          setTimeout(() => {
+            setIsResponseError(false);
+            setTextResponse('');
+          }, 3000);
+        }
       })
-      .catch(console.log)
+      .catch((err) => {
+        console.log(err);
+        setIsResponseError(true);
+        if (err.message === 'Failed to fetch') {
+          setTextResponse('Произошла ошибка на сервере. Пожалуйста, повторите запрос позднее.')
+        } else {
+          setTextResponse(err.message);
+        }
+        setTimeout(() => {
+          setIsResponseError(false);
+          setTextResponse('');
+        }, 3000);
+      })
       .finally(closePreloader);
   }
 
@@ -195,10 +276,35 @@ function App() {
         nameRU,
         nameEN,
       })
-      .then((res) => {
-        console.log(res);
+      .then((newCard) => {
+        console.log(newCard);
+        const movies = JSON.parse(localStorage.getItem('movies'));
+
+        movies.map(m => m.movieId === newCard.movieId ? m.liked = newCard._id : m);
+
+        localStorage.setItem('movies', JSON.stringify(movies));
+
+        const savedMovies = JSON.parse(localStorage.getItem('savedMovies'));
+
+        if (savedMovies) {
+          savedMovies.push(newCard);
+          localStorage.setItem('savedMovies', JSON.stringify(savedMovies));
+        }
+
       })
-      .catch(console.log)
+      .catch((err) => {
+        console.log(err);
+        setIsResponseError(true);
+        if (err.message === 'Failed to fetch') {
+          setTextResponse('Произошла ошибка на сервере. Пожалуйста, повторите запрос позднее.')
+        } else {
+          setTextResponse(err.message);
+        }
+        setTimeout(() => {
+          setIsResponseError(false);
+          setTextResponse('');
+        }, 3000);
+      })
       .finally(closePreloader);
   }
 
@@ -206,10 +312,36 @@ function App() {
     setIsPreloaderOpen(true);
     savedMoviesApi
       .deleteMovie(movieId)
-      .then((res) => {
-        console.log(res);
+      .then((newCard) => {
+        console.log(newCard);
+        const movies = JSON.parse(localStorage.getItem('movies'));
+
+        movies.map(m => m.liked === movieId ? m.liked = false : m);
+
+        localStorage.setItem('movies', JSON.stringify(movies));
+
+        const savedMovies = JSON.parse(localStorage.getItem('savedMovies'));
+
+
+        if (savedMovies) {
+          const result=savedMovies.filter((m) => m._id !== movieId);
+          localStorage.setItem('savedMovies', JSON.stringify(result));
+        }
+
       })
-      .catch(console.log)
+      .catch((err) => {
+        console.log(err);
+        setIsResponseError(true);
+        if (err.message === 'Failed to fetch') {
+          setTextResponse('Произошла ошибка на сервере. Пожалуйста, повторите запрос позднее.')
+        } else {
+          setTextResponse(err.message);
+        }
+        setTimeout(() => {
+          setIsResponseError(false);
+          setTextResponse('');
+        }, 3000);
+      })
       .finally(closePreloader);
   }
 
@@ -228,6 +360,32 @@ function App() {
       .finally(closePreloader);
   }, []);
 
+  useEffect(() => {
+    if (loggedIn) {
+      setIsPreloaderOpen(true);
+      userApi
+      .getUser()
+      .then((res) => {
+        console.log(res);
+        setCurrentUser(res);
+      })
+      .catch((err) => {
+        console.log(err);
+        setIsResponseError(true);
+        if (err.message === 'Failed to fetch') {
+          setTextResponse('Произошла ошибка на сервере. Пожалуйста, повторите запрос позднее.')
+        } else {
+          setTextResponse(err.message);
+        }
+        setTimeout(() => {
+          setIsResponseError(false);
+          setTextResponse('');
+        }, 3000);
+      })
+      .finally(closePreloader);
+    }
+  }, [loggedIn]);
+
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <Routes>
@@ -242,13 +400,21 @@ function App() {
             <ProtectedRoute
               component={Movies}
               loggedIn={loggedIn}
-              onGetMovies={handleSubmitMuvies}
+              onGetMovies={handleSubmitMovies}
+              onMovieSave={handleMoviesSave}
+              onMovieDelete={handleMoviesDelete}
+              textResponse={textResponse}
+              isResponseError={isResponseError}
             />
           } />
           <Route path="saved-movies" element={
             <ProtectedRoute
               component={SavedMovies}
               loggedIn={loggedIn}
+              onGetSavedMovies={handleSubmitSavedMovies}
+              onMovieDelete={handleMoviesDelete}
+              textResponse={textResponse}
+              isResponseError={isResponseError}
             />
           } />
           <Route path="profile" element={
@@ -257,6 +423,8 @@ function App() {
               loggedIn={loggedIn}
               onPatchUser={handleSubmitPatchUser}
               onLogout={handleSubmitLogout}
+              isResponseError={isResponseError}
+              textResponse={textResponse}
             />
           } />
         </Route>

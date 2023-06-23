@@ -4,6 +4,7 @@ import './AuthInput.css';
 
 function AuthInput({
   formId,
+  textLabel,
   name,
   id,
   type,
@@ -12,12 +13,14 @@ function AuthInput({
   maxLength,
   value,
   onChange,
+  textError
 }) {
   return (
     <label className="label" form={formId}>
-      {name}
+      {textLabel}
       <input
         className="label__input"
+        name={name}
         id={id}
         type={type}
         placeholder={placeholder}
@@ -27,7 +30,7 @@ function AuthInput({
         onChange={onChange}
         required
       />
-      <span id="error" className="error">Что-то пошло не так...</span>
+      <span id="error" className="error">{textError}</span>
     </label>
   )
 }

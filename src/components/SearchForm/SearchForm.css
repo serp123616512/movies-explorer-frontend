@@ -63,14 +63,18 @@
   border: 0;
 }
 
-.search-form__error {
+.search-form__text {
   min-height: 19px;
   font-weight: 400;
   font-size: 14px;
   line-height: 18px;
-  color: #EE3465;
+  color: #fff;
   padding: 0;
   margin: 0;
+}
+
+.search-form__text_error {
+  color: #EE3465;
 }
 
 @media screen and (max-width: 768px) {

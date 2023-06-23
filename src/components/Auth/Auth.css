@@ -48,12 +48,12 @@
 }
 
 .auth__response {
+  min-height: 20px;
   font-weight: 400;
   font-size: 14px;
   line-height: 20px;
   text-align: center;
-  color: #FFF;
-  min-height: 20px;
+  color: #fff;
   padding: 0;
   margin: 0 0 10px;
 }

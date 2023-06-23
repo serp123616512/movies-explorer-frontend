@@ -1,5 +1,5 @@
 import React from 'react';
-import { useState } from 'react';
+import useForm from '../../hooks/useForm';
 
 import Auth from '../Auth/Auth';
 import AuthForm from '../AuthForm/AuthForm';
@@ -14,27 +14,7 @@ function Register({
 }) {
   const formId = "register-form"
 
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-
-  function handleChangeName(e) {
-    setName(e.target.value);
-  }
-
-  function handleChangeEmail(e) {
-    setEmail(e.target.value);
-  }
-
-  function handleChangePassword(e) {
-    setPassword(e.target.value);
-  }
-
-  function handleSubmit(e) {
-    e.preventDefault();
-
-    onRegister({ name, email, password });
-  }
+  const { values, errors, isFormValid, handleChange, handleSubmit} = useForm();
 
   return (
     <>
@@ -43,43 +23,50 @@ function Register({
         formId={formId}
         isResponseError={isResponseError}
         textResponse={textResponse}
+        isFormValid={isFormValid}
         textButton="Зарегистрироваться"
         textFooter="Уже зарегистрированы?"
         link="/signin"
         textLink="Войти"
       >
         <AuthForm
-          onSubmit={handleSubmit}
+          onSubmit={handleSubmit(onRegister)}
           formId={formId}
         >
           <AuthInput
             formId={formId}
-            name="Имя"
+            textLabel="Имя"
+            name="name"
             id="name"
             type="text"
             placeholder="Введите ваше имя"
             minLength="2"
             maxLength="30"
-            value={name}
-            onChange={handleChangeName}
+            value={values.name || ''}
+            onChange={handleChange}
+            textError={errors.name || ''}
           />
           <AuthInput
             formId={formId}
-            name="E-mail"
+            textLabel="E-mail"
+            name="email"
             id="email"
             type="email"
             placeholder="Введите ваш E-mail"
-            value={email}
-            onChange={handleChangeEmail}
+            value={values.email || ''}
+            onChange={handleChange}
+            textError={errors.email || ''}
           />
           <AuthInput
             formId={formId}
-            name="Пароль"
+            textLabel="Пароль"
+            name="password"
             id="password"
             type="password"
             placeholder="Введите ваш пароль"
-            value={password}
-            onChange={handleChangePassword}
+            value={values.password || ''}
+            onChange={handleChange}
+            textError={errors.password || ''}
           />
         </AuthForm>
       </Auth>

@@ -9,6 +9,7 @@ function Auth({
   children,
   isResponseError,
   textResponse,
+  isFormValid,
   textButton,
   textFooter,
   link,
@@ -30,6 +31,7 @@ function Auth({
           className="auth__button button-hover"
           form={formId}
           type="submit"
+          disabled={!isFormValid}
         >{textButton}</button>
         <p className="auth__text">
           {textFooter}
