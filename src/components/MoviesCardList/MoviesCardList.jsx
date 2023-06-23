@@ -45,7 +45,7 @@ function MoviesCardList ({cards, onMovieSave, onMovieDelete }) {
   }
 
   function handleAddMoviesNarrow () {
-    setMovies([...movies, remainingMovies.slice(0, 2)]);
+    setMovies([...movies, ...remainingMovies.slice(0, 2)]);
     setRemainingMovies(remainingMovies.slice(2));
   }
 
