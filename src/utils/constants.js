@@ -1,5 +1,6 @@
 export const configMainApi = {
-  baseUrl: 'http://localhost:3001',
+  // baseUrl: 'http://localhost:3001',
+  baseUrl: 'https://api.movies-explorer.serp.nomoredomains.rocks',
   headers: { 'Content-Type': 'application/json' },
 };
 
