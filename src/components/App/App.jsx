@@ -93,6 +93,7 @@ function App() {
         console.log(res);
         setLoggedIn(false);
         setCurrentUser({});
+        localStorage.clear();
       })
       .catch((err) => {
         console.log(err);
