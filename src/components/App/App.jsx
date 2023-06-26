@@ -118,6 +118,12 @@ function App() {
       .then((res) => {
         console.log(res);
         setCurrentUser(res);
+        setIsResponseError(false);
+        setTextResponse('Изменение порофиля прошло успешно.')
+        setTimeout(() => {
+          setIsResponseError(false);
+          setTextResponse('');
+        }, 2000);
       })
       .catch((err) => {
         setIsResponseError(true);
