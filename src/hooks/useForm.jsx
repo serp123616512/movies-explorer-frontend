@@ -1,4 +1,5 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback } from 'react';
+import validator from 'validator';
 
 function useForm() {
   const [values, setValues] = useState({});
@@ -9,6 +10,12 @@ function useForm() {
     let { name, value } = e.target;
     if (e.target.type === 'checkbox') {
       value = e.target.checked;
+    }
+
+    if (e.target.type === 'email' && e.target.value !== '' && !validator.isEmail(e.target.value)) {
+      e.target.setCustomValidity('Необходимо ввести e-mail в формате name@domain.zone');
+    } else {
+      e.target.setCustomValidity('');
     }
 
     setValues((values) => ({ ...values, [name]: value }));
