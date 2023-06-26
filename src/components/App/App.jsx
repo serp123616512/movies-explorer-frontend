@@ -363,6 +363,8 @@ function App() {
       })
       .catch(() => {
         setLoggedIn(false);
+        setCurrentUser({});
+        localStorage.clear();
       })
       .finally(closePreloader);
   }, []);

@@ -10,7 +10,7 @@ function SearchForm({ inputsValue, onSubmit, isResponseError, textResponse }) {
   const { values, errors, isFormValid, handleChange, handleSubmit, hendleReset } = useForm();
 
   useEffect(() => {
-    hendleReset({ movieValue: inputsValue.movieValue, checked: inputsValue.checked }, {}, true);
+    hendleReset({ movieValue: inputsValue.movieValue, checked: inputsValue.checked }, {}, false);
   }, [inputsValue, hendleReset]);
 
   return (
@@ -37,7 +37,7 @@ function SearchForm({ inputsValue, onSubmit, isResponseError, textResponse }) {
         type="submit"
         form="search-form"
         value=" "
-        disabled={!isFormValid || isResponseError}
+        disabled={!isFormValid}
         />
       </fieldset>
       <FilterCheckbox
