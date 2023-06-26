@@ -59,7 +59,7 @@ function Profile({ onLogout, onPatchUser, isResponseError, textResponse }) {
         className="profile__submit button-hover"
         type="submit"
         form="profile__form"
-        disabled={!isFormValid}
+        disabled={!isFormValid || !(values.name !== currentUser.name || values.email !== currentUser.email)}
       >Редактировать</button>
       <button
         className="profile__logout button-hover"
