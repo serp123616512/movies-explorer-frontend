@@ -39,9 +39,8 @@ export const filterFilms = ({ moviesBitfilms, savedMovies, movieValue, checked }
   movieValue = movieValue.toLowerCase().replace(/^\s+|\s+$|\s+(?=\s)/g, "");
 
   moviesBitfilms.forEach((movie) => {
-    if (movie.nameRU.includes(movieValue) && (checked ? movie.duration <= shortFilm : true)) {
-      const savedMovie = savedMovies.find((savedMovie) => savedMovie.movieId === movie.id);
-
+    if (movie.nameRU.toLowerCase().includes(movieValue) && (checked ? movie.duration <= shortFilm : true)) {
+      const savedMovie = savedMovies.find((savedMovie) => savedMovie.movieId === movie.movieId);
       if (savedMovie) {
         movie.liked = savedMovie._id;
       }

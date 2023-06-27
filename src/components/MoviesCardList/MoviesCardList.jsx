@@ -5,7 +5,7 @@ import MoviesCard from '../MoviesCard/MoviesCard';
 
 import './MoviesCardList.css';
 
-function MoviesCardList ({cards, onMovieSave, onMovieDelete }) {
+function MoviesCardList ({cards, onMovieSave, onMovieDelete, onSubmit }) {
   const location = useLocation();
 
   const ref = useRef(null);
@@ -13,17 +13,22 @@ function MoviesCardList ({cards, onMovieSave, onMovieDelete }) {
   const [movies, setMovies] = useState([]);
   const [remainingMovies, setRemainingMovies] = useState([]);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     setWidth(ref.current.clientWidth);
-    if (ref.current.clientWidth > 887) {
-      setMovies(cards.slice(0, 12));
-      setRemainingMovies(cards.slice(12));
-    } else if (ref.current.clientWidth < 590) {
-      setMovies(cards.slice(0, 5));
-      setRemainingMovies(cards.slice(5));
+    if (movies.length >= 1) {
+      setMovies(cards.slice(0, movies.length));
+      setRemainingMovies(cards.slice(movies.length));
     } else {
-      setMovies(cards.slice(0, 8));
-      setRemainingMovies(cards.slice(8));
+      if (ref.current.clientWidth > 887) {
+        setMovies(cards.slice(0, 12));
+        setRemainingMovies(cards.slice(12));
+      } else if (ref.current.clientWidth < 590) {
+        setMovies(cards.slice(0, 5));
+        setRemainingMovies(cards.slice(5));
+      } else {
+        setMovies(cards.slice(0, 8));
+        setRemainingMovies(cards.slice(8));
+      }
     }
   }, [cards]);
 
@@ -40,12 +45,12 @@ function MoviesCardList ({cards, onMovieSave, onMovieDelete }) {
   }, []);
 
   function handleAddMoviesWide () {
-    setMovies([...movies, ...remainingMovies.slice(0, 3)]);
+    setMovies(movies.concat(remainingMovies.slice(0, 3)));
     setRemainingMovies(remainingMovies.slice(3));
   }
 
   function handleAddMoviesNarrow () {
-    setMovies([...movies, ...remainingMovies.slice(0, 2)]);
+    setMovies(movies.concat(remainingMovies.slice(0, 2)));
     setRemainingMovies(remainingMovies.slice(2));
   }
 

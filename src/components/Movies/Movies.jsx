@@ -19,6 +19,7 @@ function Movies({ onGetMovies, isResponseError, textResponse, onMovieSave, onMov
         cards={cards}
         onMovieSave={onMovieSave}
         onMovieDelete={onMovieDelete}
+        onSubmit={onGetMovies}
       />
     </section>
   )
