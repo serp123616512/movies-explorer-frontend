@@ -5,7 +5,7 @@ import MoviesCardList from '../MoviesCardList/MoviesCardList';
 
 import './SavedMovies.css';
 
-function SavedMovies({ onGetSavedMovies, isResponseError, textResponse, onMovieDelete }) {
+function SavedMovies({ onGetSavedMovies, isResponseError, textResponse, onMovieDelete, cards }) {
     return (
     <section className="saved-movies">
       <SearchForm
@@ -13,9 +13,10 @@ function SavedMovies({ onGetSavedMovies, isResponseError, textResponse, onMovieD
         onSubmit={onGetSavedMovies}
         isResponseError={isResponseError}
         textResponse={textResponse}
+        required={false}
       />
       <MoviesCardList
-        cards={JSON.parse(localStorage.getItem('savedMovies')) || []}
+        cards={cards}
         onMovieDelete={onMovieDelete}
       />
     </section>

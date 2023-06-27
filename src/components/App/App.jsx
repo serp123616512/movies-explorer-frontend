@@ -20,7 +20,7 @@ import moviesApi from '../../utils/MoviesApi';
 import savedMoviesApi from '../../utils/SavedMoviesApi';
 import userApi from '../../utils/UserApi';
 
-import { configMoviesApi, shortFilm } from '../../utils/constants';
+import { filterFilms, reformFilms } from '../../utils/utils';
 
 function App() {
   const navigate = useNavigate();
@@ -30,6 +30,8 @@ function App() {
   const [textResponse, setTextResponse] = useState('');
   const [currentUser, setCurrentUser] = useState({});
   const [isPreloaderOpen, setIsPreloaderOpen] = useState(true);
+  const [cards, setCards] = useState([]);
+  const [savedCards, setSavedCards] = useState([]);
 
   function closePreloader() {
     setIsPreloaderOpen(false);
@@ -93,6 +95,8 @@ function App() {
         console.log(res);
         setLoggedIn(false);
         setCurrentUser({});
+        setCards([]);
+        setSavedCards([]);
         localStorage.clear();
       })
       .catch((err) => {
@@ -146,113 +150,113 @@ function App() {
     setIsPreloaderOpen(true);
     localStorage.setItem('movieInputsValue', JSON.stringify({ movieValue, checked}));
 
-    Promise.all([moviesApi.getMovies(), savedMoviesApi.getMovies()])
-      .then(([moviesData, savedMoviesData]) => {
-        const movies = [];
-        moviesData.forEach((movie) => {
-          if (movie.description.includes(movieValue) && (checked ? movie.duration <= shortFilm : true)) {
+    if (!(JSON.parse(localStorage.getItem('moviesBitfilms')))) {
+      Promise.all([moviesApi.getMovies(), savedMoviesApi.getMovies()])
+        .then(([moviesData, savedMovies]) => {
+          const moviesBitfilms = reformFilms(moviesData);
+          const filteredMovies = filterFilms({ moviesBitfilms, savedMovies, movieValue, checked });
+          const filteredSavedMovies = savedMovies;
+          setCards(filteredMovies);
+          setSavedCards(filteredSavedMovies);
 
-            const savedMovie = savedMoviesData.find((savedMovie) => savedMovie.movieId === movie.id)
+          localStorage.setItem('moviesBitfilms', JSON.stringify(moviesBitfilms));
+          localStorage.setItem('filteredMovies', JSON.stringify(filteredMovies));
+          localStorage.setItem('savedMovies', JSON.stringify(savedMovies));
+          localStorage.setItem('filteredSavedMovies', JSON.stringify(filteredSavedMovies));
 
-            if (savedMovie) {
-              movies.push({
-                country: movie.country,
-                director: movie.director,
-                duration: movie.duration,
-                year: movie.year,
-                description: movie.description,
-                image: configMoviesApi.baseUrl + movie.image.url,
-                trailerLink: movie.trailerLink,
-                thumbnail: configMoviesApi.baseUrl + movie.image.formats.thumbnail.url,
-                movieId: movie.id,
-                nameRU: movie.nameRU,
-                nameEN: movie.nameEN,
-                liked: savedMovie._id,
-              })
-            } else {
-              movies.push({
-                country: movie.country,
-                director: movie.director,
-                duration: movie.duration,
-                year: movie.year,
-                description: movie.description,
-                image: configMoviesApi.baseUrl + movie.image.url,
-                trailerLink: movie.trailerLink,
-                thumbnail: configMoviesApi.baseUrl + movie.image.formats.thumbnail.url,
-                movieId: movie.id,
-                nameRU: movie.nameRU,
-                nameEN: movie.nameEN,
-                liked: false,
-              })
-            }
+          if (filteredMovies.length === 0) {
+            setTextResponse('К сожалению, не найдено ни одного фильма, удовлетворяющего вашему запросу.');
+            setTimeout(() => {
+              setIsResponseError(false);
+              setTextResponse('');
+            }, 3000);
           }
         })
-
-        localStorage.setItem('movies', JSON.stringify(movies));
-
-        if (movies.length === 0) {
-          setTextResponse('К сожалению, не найдено ни одного фильма, удовлетворяющего вашему запросу.');
+        .catch((err) => {
+          console.log(err);
+          setIsResponseError(true);
+          if (err.message === 'Failed to fetch') {
+            setTextResponse('Произошла ошибка на сервере. Пожалуйста, повторите запрос позднее.')
+          } else {
+            setTextResponse(err.message);
+          }
           setTimeout(() => {
             setIsResponseError(false);
             setTextResponse('');
           }, 3000);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-        setIsResponseError(true);
-        if (err.message === 'Failed to fetch') {
-          setTextResponse('Произошла ошибка на сервере. Пожалуйста, повторите запрос позднее.')
-        } else {
-          setTextResponse(err.message);
-        }
+        })
+        .finally(closePreloader);
+    } else {
+      const moviesBitfilms = JSON.parse(localStorage.getItem('moviesBitfilms'));
+      const savedMovies = JSON.parse(localStorage.getItem('savedMovies'));
+      const filteredMovies = filterFilms({ moviesBitfilms, savedMovies, movieValue, checked });
+
+      if (filteredMovies.length === 0) {
+        setTextResponse('К сожалению, не найдено ни одного фильма, удовлетворяющего вашему запросу.');
         setTimeout(() => {
           setIsResponseError(false);
           setTextResponse('');
         }, 3000);
-      })
-      .finally(closePreloader);
+      }
+
+      localStorage.setItem('filteredMovies', JSON.stringify(filteredMovies));
+      setCards(filteredMovies);
+      closePreloader();
+    }
   }
 
   function handleSubmitSavedMovies({ movieValue, checked }) {
     setIsPreloaderOpen(true);
     localStorage.setItem('savedMovieInputsValue', JSON.stringify({ movieValue, checked}));
 
-    savedMoviesApi
-      .getMovies()
-      .then((res) => {
-        console.log(res);
-        const movies = [];
-        res.forEach((movie) => {
-          if (movie.description.includes(movieValue) && (checked ? movie.duration <= shortFilm : true)) {
-            movies.push(movie)
+    if (!(JSON.parse(localStorage.getItem('savedMovies')))) {
+      savedMoviesApi
+        .getMovies()
+        .then((res) => {
+          localStorage.setItem('savedMovies', JSON.stringify(res));
+          const filteredSavedMovies = filterFilms({ moviesBitfilms: res, savedMovies: [], movieValue, checked });
+          setSavedCards(filteredSavedMovies);
+
+          localStorage.setItem('filteredSavedMovies', JSON.stringify(filteredSavedMovies));
+
+          if (filteredSavedMovies.length === 0) {
+            setTextResponse('К сожалению, не найдено ни одного фильма, удовлетворяющего вашему запросу.');
+            setTimeout(() => {
+              setIsResponseError(false);
+              setTextResponse('');
+            }, 3000);
           }
         })
-
-        localStorage.setItem('savedMovies', JSON.stringify(movies));
-
-        if (movies.length === 0) {
-          setTextResponse('К сожалению, не найдено ни одного фильма, удовлетворяющего вашему запросу.');
+        .catch((err) => {
+          console.log(err);
+          setIsResponseError(true);
+          if (err.message === 'Failed to fetch') {
+            setTextResponse('Произошла ошибка на сервере. Пожалуйста, повторите запрос позднее.')
+          } else {
+            setTextResponse(err.message);
+          }
           setTimeout(() => {
             setIsResponseError(false);
             setTextResponse('');
           }, 3000);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-        setIsResponseError(true);
-        if (err.message === 'Failed to fetch') {
-          setTextResponse('Произошла ошибка на сервере. Пожалуйста, повторите запрос позднее.')
-        } else {
-          setTextResponse(err.message);
-        }
+        })
+        .finally(closePreloader);
+    } else {
+      const savedMovies = JSON.parse(localStorage.getItem('savedMovies'));
+      const filteredSavedMovies = filterFilms({ moviesBitfilms: savedMovies, savedMovies: [], movieValue, checked });
+
+      if (filteredSavedMovies.length === 0) {
+        setTextResponse('К сожалению, не найдено ни одного фильма, удовлетворяющего вашему запросу.');
         setTimeout(() => {
           setIsResponseError(false);
           setTextResponse('');
         }, 3000);
-      })
-      .finally(closePreloader);
+      }
+
+      localStorage.setItem('filteredSavedMovies', JSON.stringify(filteredSavedMovies));
+      setSavedCards(filteredSavedMovies);
+      closePreloader();
+    }
   }
 
   function handleMoviesSave({
@@ -284,20 +288,26 @@ function App() {
         nameEN,
       })
       .then((newCard) => {
-        console.log(newCard);
-        const movies = JSON.parse(localStorage.getItem('movies'));
-
-        movies.map(m => m.movieId === newCard.movieId ? m.liked = newCard._id : m);
-
-        localStorage.setItem('movies', JSON.stringify(movies));
-
+        const filteredMovies = JSON.parse(localStorage.getItem('filteredMovies'));
         const savedMovies = JSON.parse(localStorage.getItem('savedMovies'));
+        const filteredSavedMovies = JSON.parse(localStorage.getItem('filteredSavedMovies'));
+
+        if (filteredMovies) {
+          filteredMovies.map(m => m.movieId === newCard.movieId ? m.liked = newCard._id : m);
+          localStorage.setItem('filteredMovies', JSON.stringify(filteredMovies));
+          setCards(filteredMovies);
+        }
 
         if (savedMovies) {
           savedMovies.push(newCard);
           localStorage.setItem('savedMovies', JSON.stringify(savedMovies));
         }
 
+        if (filteredSavedMovies) {
+          filteredSavedMovies.push(newCard);
+          localStorage.setItem('filteredSavedMovies', JSON.stringify(filteredSavedMovies));
+          setSavedCards(filteredSavedMovies);
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -320,21 +330,26 @@ function App() {
     savedMoviesApi
       .deleteMovie(movieId)
       .then((newCard) => {
-        console.log(newCard);
-        const movies = JSON.parse(localStorage.getItem('movies'));
-
-        movies.map(m => m.liked === movieId ? m.liked = false : m);
-
-        localStorage.setItem('movies', JSON.stringify(movies));
-
+        const filteredMovies = JSON.parse(localStorage.getItem('filteredMovies'));
         const savedMovies = JSON.parse(localStorage.getItem('savedMovies'));
+        const filteredSavedMovies = JSON.parse(localStorage.getItem('filteredSavedMovies'));
 
+        if (filteredMovies) {
+          filteredMovies.map(m => m.liked === movieId ? m.liked = false : m);
+          localStorage.setItem('filteredMovies', JSON.stringify(filteredMovies));
+          setCards(filteredMovies);
+        }
 
         if (savedMovies) {
-          const result=savedMovies.filter((m) => m._id !== movieId);
+          const result = savedMovies.filter((m) => m._id !== movieId);
           localStorage.setItem('savedMovies', JSON.stringify(result));
         }
 
+        if (filteredSavedMovies) {
+          const resultfiltered = filteredSavedMovies.filter((m) => m._id !== movieId);
+          localStorage.setItem('filteredSavedMovies', JSON.stringify(resultfiltered));
+          setSavedCards(resultfiltered);
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -353,6 +368,14 @@ function App() {
   }
 
   useEffect(() => {
+    if(JSON.parse(localStorage.getItem('filteredMovies'))) {
+      setCards(JSON.parse(localStorage.getItem('filteredMovies')))
+    }
+
+    if(JSON.parse(localStorage.getItem('filteredSavedMovies'))) {
+      setSavedCards(JSON.parse(localStorage.getItem('filteredSavedMovies')))
+    }
+
     userApi
       .getUser()
       .then((res) => {
@@ -364,6 +387,8 @@ function App() {
       .catch(() => {
         setLoggedIn(false);
         setCurrentUser({});
+        setCards([]);
+        setSavedCards([]);
         localStorage.clear();
       })
       .finally(closePreloader);
@@ -414,6 +439,7 @@ function App() {
               onMovieDelete={handleMoviesDelete}
               textResponse={textResponse}
               isResponseError={isResponseError}
+              cards={cards}
             />
           } />
           <Route path="saved-movies" element={
@@ -424,6 +450,7 @@ function App() {
               onMovieDelete={handleMoviesDelete}
               textResponse={textResponse}
               isResponseError={isResponseError}
+              cards={savedCards}
             />
           } />
           <Route path="profile" element={

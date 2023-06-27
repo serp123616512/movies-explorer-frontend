@@ -5,12 +5,12 @@ import FilterCheckbox from '../FilterCheckbox/FilterCheckbox';
 
 import './SearchForm.css';
 
-function SearchForm({ inputsValue, onSubmit, isResponseError, textResponse }) {
+function SearchForm({ inputsValue, onSubmit, isResponseError, textResponse, required }) {
 
   const { values, errors, isFormValid, handleChange, handleSubmit, hendleReset } = useForm();
 
   useEffect(() => {
-    hendleReset({ movieValue: inputsValue.movieValue, checked: inputsValue.checked }, {}, false);
+    hendleReset({ movieValue: inputsValue.movieValue, checked: inputsValue.checked }, {}, isFormValid);
   }, [inputsValue, hendleReset]);
 
   return (
@@ -30,7 +30,7 @@ function SearchForm({ inputsValue, onSubmit, isResponseError, textResponse }) {
           placeholder="Фильм"
           value={values.movieValue || ''}
           onChange={handleChange}
-          required
+          required={required}
         />
         <input
         className="search-form__submit button-hover"

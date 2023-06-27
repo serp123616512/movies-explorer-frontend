@@ -5,17 +5,18 @@ import MoviesCardList from '../MoviesCardList/MoviesCardList';
 
 import './Movies.css';
 
-function Movies({ onGetMovies, isResponseError, textResponse, onMovieSave, onMovieDelete }) {
-    return (
+function Movies({ onGetMovies, isResponseError, textResponse, onMovieSave, onMovieDelete, cards }) {
+  return (
     <section className="movies">
       <SearchForm
         inputsValue={JSON.parse(localStorage.getItem('movieInputsValue')) || { movieValue: '', checked: false }}
         onSubmit={onGetMovies}
         isResponseError={isResponseError}
         textResponse={textResponse}
+        required={true}
       />
       <MoviesCardList
-        cards={JSON.parse(localStorage.getItem('movies')) || []}
+        cards={cards}
         onMovieSave={onMovieSave}
         onMovieDelete={onMovieDelete}
       />
