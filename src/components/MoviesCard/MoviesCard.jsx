@@ -10,13 +10,15 @@ function MoviesCard ({card, onMovieSave, onMovieDelete}) {
 
   return (
     <li className="card">
-      <img
-        className="card__img"
-        src={card.image}
-        alt={card.nameRU}
-      />
+      <Link className="card__link button-hover" to={card.trailerLink}>
+        <img
+          className="card__img"
+          src={card.image}
+          alt={card.nameRU}
+        />
+      </Link>
       <div className="card__info">
-        <Link className="card__link button-hover" to={card.trailerLink}>{card.nameRU}</Link>
+        <h2 className="card__heading">{card.nameRU}</h2>
         {location.pathname === '/movies' && (
           <button
           className={card.liked ? 'card__like card__like_active button-hover' : 'card__like button-hover'}
