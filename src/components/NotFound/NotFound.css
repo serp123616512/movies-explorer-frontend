@@ -6,7 +6,6 @@
   align-items: center;
   justify-content: center;
   background-color: #202020;
-  position: relative;
 }
 
 .not-found__status {
@@ -15,7 +14,7 @@
   line-height: 169px;
   color: #FFFFFF;
   padding: 0;
-  margin: 0 0 5px;
+  margin: auto 0 5px;
 }
 
 .not-found__message {
@@ -25,7 +24,7 @@
   text-align: center;
   color: #FFFFFF;
   padding: 0;
-  margin: 0;
+  margin: 0 0 auto;
 }
 
 .not-found__button {
@@ -36,13 +35,13 @@
   background-color: rgba(0, 0, 0, 0);
   border: none;
   box-shadow: none;
-  position: absolute;
-  bottom: 60px;
+  margin-top: 30px;
+  margin-bottom: 60px;
 }
 
 @media screen and (max-width: 768px) {
   .not-found__button {
-    bottom: 222px;
+    margin-bottom: 222px;
   }
 }
 
@@ -61,6 +60,6 @@
   .not-found__button {
     font-size: 12px;
     line-height: 15px;
-    bottom: 30px;
+    margin-bottom: 30px;
   }
 }
